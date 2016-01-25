@@ -1,0 +1,49 @@
+/* 
+    Created on : Jan 20, 2016, 12:24:43 PM
+    Author     : mobin
+*/
+body{ 
+    font-family:'B yekan',tahoma;
+    font-size:14px;
+}
+.font{ 
+    font-family:'B yekan',tahoma;
+    font-size:14px;
+}
+
+body 
+{ 
+    background: url(/error.png) scroll 1% 2%; 
+    color: #808040;     
+    text-align:center; 
+} 
+
+h1 
+{ 
+    font-size: 2.2em; 
+} 
+
+h2 
+{ 
+    font-size: 2.0em;     
+} 
+
+h3 
+{ 
+    font-size: 1.8em; 
+} 
+
+h4 
+{ 
+    font-size: 1.6em;     
+} 
+
+h5 
+{ 
+    font-size: 1.4em;     
+} 
+
+p 
+{ 
+    font-size: 1.2em;     
+}

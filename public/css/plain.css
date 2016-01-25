@@ -1,0 +1,249 @@
+/* 
+    Created on : Jan 20, 2016, 12:24:43 PM
+    Author     : mobin ghahramanpour bonab
+*/
+html {
+	background: url("/chat-wallpaper.png");
+}
+
+body {
+	font-family: 'B yekan', tahoma;
+	font-size: 14px;
+	width: 80%;
+	margin: 0 auto;
+	margin-top: 10px;
+}
+
+span {
+	padding-bottom: 20px;
+	padding-left: 20px;
+}
+
+.font {
+	font-family: 'B yekan', tahoma;
+	font-size: 14px;
+}
+
+form {
+	margin-top: 10px;
+	display: inline;
+}
+
+form input[type=file] {
+	display: list-item;
+	background: url("/file.png");
+	padding: 10px;
+	border: none;
+	width: 38px;
+	margin-top: 15px;
+	cursor: pointer;
+}
+
+form input[type=text] {
+	border-radius: 15px;
+	padding: 10px;
+	border: none;
+	width: 60%;
+	background: #EAA502;
+	margin-top: 15px;
+	color: rgb(0, 0, 102);
+}
+
+form button {
+	margin-left: 0.5em;
+	width: 20%;
+	height: 2.5em;
+	padding: 0.2em 1em 0.2em 2.25em;
+	font-size: 1em;
+	font-family: "Open Sans";
+	text-transform: uppercase;
+	color: #696666;
+	background: url(/arrow.png) no-repeat scroll 0.75em 0.07em transparent;
+	background-size: 32px 100px;
+	border-radius: 2em;
+	border: 0.15em solid #F9C23C;
+	cursor: pointer;
+	transition: all 0.3s ease 0s;
+}
+
+form button:hover {
+	color: #fff;
+	background-color: #EAA502;
+	border-color: #EAA502;
+	background-position: 0.75em bottom;
+	-webkit-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+
+#messages {
+	overflow-y: auto;
+	height: 350px;
+	margin: 0;
+	padding: 0;
+}
+
+#messages li {
+	padding: 5px 10px;
+	margin-top: 5px;
+	list-style-type: none;
+}
+
+#messages span {
+	border-radius: 35px;
+	padding: 5px 10px;
+	margin-top: 5px;
+	background: rgb(255, 255, 204);
+	list-style-type: none;
+}
+
+#clients {
+	width: 250px;
+	overflow-y: auto;
+	line-height: 30px;
+	height: 500px;
+	float: left;
+	padding: 5px;
+	margin: 10px;
+	list-style-type: none;
+	background: #ccc;
+}
+
+#clients table {
+	overflow-y: auto;
+	width: 90%;
+	line-height: 30px;
+	/*     height:300px; */
+	float: left;
+	padding: 5px;
+	margin: 5px;
+}
+
+#clients li {
+	cursor: pointer;
+	text-align: center;
+	border-radius: 35px;
+	margin: 5px;
+	background: #eee;
+	list-style-type: none;
+}
+
+#clients li:hover {
+	background: rgb(153, 153, 102);
+}
+
+#chat {
+	/* 	background: #eee; */
+	width: 550px;
+	float: left;
+	padding: 10px;
+	margin: 10px;
+	height: 100%
+}
+
+#alerts {
+	width: 170px;
+	/* 	line-height: 30px; */
+	height: 300px;
+	float: left;
+	padding: 5px;
+	margin: 10px;
+	background: #eee;
+	font-size: .9em;
+}
+
+#alerts li {
+	text-align: center;
+	border-radius: 35px;
+	padding: 5px 10px;
+	background: rgb(102, 153, 153);
+	list-style-type: none;
+}
+
+#selected {
+	text-align: center;
+	list-style-type: none;
+	height: 20px;
+	color: red;
+}
+
+#menu {
+	width: 100%;
+	line-height: 30px;
+	height: 50px;
+	float: left;
+	list-style-type: none;
+	background: #53687e;
+}
+
+#showInput {
+	cursor: pointer;
+}
+
+#showInput:hover {
+	color: rgb(153, 153, 102);
+}
+
+#g {
+	visibility: hidden;
+	font-family: 'B yekan', tahoma;
+	font-size: 16px;
+	background: transparent;
+	border: none;
+	border-bottom: 1px dashed #83A4C5;
+	width: 200px;
+	outline: none;
+	padding: 0px 0px 0px 0px;
+	font-style: italic;
+}
+
+#sg {
+	visibility: hidden;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	font-family: 'B yekan', tahoma;
+	font-size: 16px;
+	color: #fff;
+	padding: 10px 10px 0px 0px;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .1);
+	margin-top: 6px;
+}
+
+#gg {
+	float: left;
+	border: none;
+	background: transparent;
+	margin-left: 10px;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .1);
+	border: none;
+}
+
+#profile {
+	float: right;
+	border: none;
+	background: transparent;
+	margin-right: 10px;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .1);
+}
+
+#h {
+	visibility: hidden;
+}
+
+tr {
+	cursor: pointer;
+	transition: all 0.3s ease 0s;
+}
+
+tr:hover {
+	box-shadow: inset 0 10px 5px rgba(0, 0, 0, .1);
+	background-position: 0.75em bottom;
+	-webkit-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+
+#signout:hover {
+	color: #eee;
+}

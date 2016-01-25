@@ -1,0 +1,481 @@
+<!doctype html>
+<html>
+  <head>
+    <title><%= user.name %> | Chat Web App</title>
+    <link rel="stylesheet" href="/plain.css">
+    <link rel="stylesheet" href="http://ifont.ir/apicode/38">
+  </head>
+
+  <body>
+        <div id="menu">
+         <!-- <span style="margin-left:10px "> change setting here </span> -->
+          <div id="gg">
+			<label id="h">Create Group : </label>
+            <input placeholder="name group here" id="g" autocomplete="off"/>
+            <button id="sg">create group</button>
+          </div>
+		  
+		  <div id="profile">
+			<% if(user.gender === 'male') {%>
+				<label> خوش آمدید ،<%=user.name%> آقا</label>
+			<%} else {%>
+			<label>خوش آمدید ،<%=user.name%> خانم</label>
+			<%}%>
+		  </div>
+		   <div id="profile">
+			<label id="signout" onclick="signout()">  خروج </label>
+		   </div>
+        </div>
+        <div id="clients" >
+		   <table id="offline" ></table>
+		   <table id="online" ></table>
+		   <table id="groups" ></table>   
+        </div>
+        <div id="chat">
+                <ul id="selected" ></ul>
+                <ul  id="messages"></ul>
+				<hr />
+                <form action="" method="post" id="clr">
+				<img src="file.png" id="upfile1" style="cursor:pointer" />
+				<input type="file" id="imageFile"  name="file1" style="display:none" />
+                <input type="text" id="m" autocomplete="off" /><button>send</button>
+                </form>
+        </div>
+        <ul id="alerts" ></ul>
+
+
+
+
+
+  </body>
+
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript">
+            var rec = {id: "", name: ""};
+            $('#selected').empty();
+
+            var socket = io.connect('http://localhost:3000');
+
+            var user = {};
+            user.name = '<%=user.name%>';
+            user.id = '<%=user.id%>';
+			user.gender = '<%=user.gender%>';
+
+            socket.emit('validation message', user);
+			
+			$("#upfile1").click(function () {
+				$("#imageFile").trigger('click');
+			});
+			
+			 $('#imageFile').on('change', function(e){
+			   if( rec.id === "" )
+                {
+                  $('#alerts').empty();
+                  $('#alerts').append($('<li>').text('@' + user.id + ' : please select a contact' ));
+                }else{
+				  var file = e.originalEvent.target.files[0],
+						  reader = new FileReader();
+						  
+						  console.log(file.name);
+						  console.log(file.size);
+						  console.log(file.type);
+						  
+						var imageType = /^image\//;
+						var audioType =  /^audio\//;
+						var videoType = /^video\//;
+						
+				  reader.onload = function(evt){
+					  var ran = new Date().getTime();
+					  if (imageType.test(file.type)) 
+						{
+							$('#messages').append($('<li style="text-align:right;"><span>@you : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+							$('#img'+ran).attr('src', evt.target.result);
+							var msg = {
+								code : "",
+								msg: evt.target.result,
+								sender: user,
+								reciever: rec,
+								type: 'img-type'
+								};
+						}else if(audioType.test(file.type))
+						{
+							$('#messages').append($('<li style="text-align:right;"><span>@you :<audio controls> <source src=""  id="img'+ran+'" type="'+file.type+'"></audio> </span></li>'));
+							$('#img'+ran).attr('src', evt.target.result);
+							var msg = {
+								code : "",
+								msg: evt.target.result,
+								sender: user,
+								reciever: rec,
+								type: 'audio-type'
+								};
+						}else if(videoType.test(file.type))
+						{
+							$('#messages').append($('<li style="text-align:right;"><span>@you :<video controls> <source src=""  id="img'+ran+'" type="'+file.type+'"></video> </span></li>'));
+							$('#img'+ran).attr('src', evt.target.result);
+							var msg = {
+								code : "",
+								msg: evt.target.result,
+								sender: user,
+								reciever: rec,
+								type: 'video-type'
+								};
+						}
+						else
+						{
+							var msg = {
+									code : "",
+									tt : file.type,
+									name : file.name,
+									msg : evt.target.result,
+									sender : user,
+									reciever : rec,
+									type : 'other-type'
+									};
+							socket.emit('chat message', msg);
+							socket.on('other type', function(data){
+							$('#messages').append($('<li style="text-align:right;"><span>@you : <a href=""  id="img'+ran+'" type="'+file.type+'"> <code>file</code> </a></span></li>'));
+							$('#img'+ran).attr('href', data.add);
+							});
+						}
+							/*
+							// async 
+									// send a custom socket message to server
+									socket.emit('chat message', msg);
+							*/
+				  };
+				  reader.readAsDataURL(file);
+				  }
+			  });
+				
+            socket.on('groups', function (data) {
+                $('#groups').empty();
+                $('#groups').append($('<tr><td onclick="showGroup()" id="showInput">groups :</td></tr>'));
+                var client = data;
+                for (var i = 0; i < client.length; i++)
+                    {
+                        var ii = client[i].id;
+                        $('#groups').append($('<tr><td><img src="user-group.png" onclick = "selectg(\'' + ii + '\')"></td><td>@'+ii+'</td> </tr>'));
+                    }
+            });
+
+            socket.on('sockets-off', function (data) {
+                $('#offline').empty();
+                $('#offline').append($('<p>').text('all clients :'));
+                var client = data;
+                for (var i = 0; i < client.length; i++)
+                    {
+						var ii = client[i].id;
+                       if (client[i].gender === 'male')
+						{
+                           $('#offline').append($('<tr><td><img src="userman.png" onclick = "select(\'' + ii + '\')"></td><td>@'+ii+'</td> </tr>'));
+                        } else
+						{
+							$('#offline').append($('<tr><td><img src="user-woman.png" onclick = "select(\'' + ii + '\')"></td><td>@'+ii+'</td> </tr>'));
+						}
+                    }
+            });
+
+            socket.on('sockets', function (data) {
+                $('#online').empty();
+                $('#online').append($('<p>').text('onlines :'));
+                var client = data;
+                for (var i = 0; i < client.length; i++)
+                    if (client[i].id !== user.id)
+                    {
+                        var ii = client[i].id;
+						if (client[i].gender === 'male')
+						{
+                           $('#online').append($('<tr><td><img src="userman.png" onclick = "select(\'' + ii + '\')"></td><td>@'+ii+'</td> </tr>'));
+                        } else
+						{
+						  $('#online').append($('<tr><td><img src="user-woman.png" onclick = "select(\'' + ii + '\')"></td><td>@'+ii+'</td> </tr>'));
+						}
+                    }
+            });
+
+            function select(data)
+            {
+                $('#selected').empty();
+                if(user.id !== data)
+                {
+                    reloadMessage(user.id, data);
+                    rec.id = data;
+                    $('#selected').append($('<li>').text('@' + rec.id ));
+                }else
+                {
+                    rec = {id: "", name: ""};
+					$('#messages').empty();
+                    $('#alerts').empty();
+                    $('#alerts').append($('<li>').text('cannot select @youself'));
+                }
+            }
+
+            function reloadMessage(sen, rec)
+            {
+                socket.emit('history', {me:sen, it:rec});
+                socket.on('historyBack', function (msg)
+                {
+                  var sent = msg.sent;
+                  var rec = msg.rec;
+
+                  var i = sent.length;
+                  var j = rec.length;
+                  var z = i + j;
+
+                  console.log(z);
+                  $('#messages').empty();
+
+                  var i1=0;
+                  var j1=0;
+                  
+                  for (var k = 0; k < z; k++)
+                    {
+                            if (sent[i1].date < rec[j1].date)
+                            {
+							  if (sent[i1].type==='img-type')
+							  {
+								 var ran = new Date().getTime();
+								 $('#messages').append($('<li style="text-align:right;"><span>@you : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+								 $('#img'+ran).attr('src', sent[i1].message);
+                              }else
+							  {
+                                 $('#messages').append($('<li style="text-align:right"><span style="border-left: 5px solid #558abb;"> @you:' + sent[i1].message + '</span></li>'));
+							  }
+                                i1++;
+                                 if (i1 >= i) {
+                                   for (var kk = j1 ; kk < j ; kk++)
+                                   {
+									if (rec[kk].type==='img-type')
+									  {
+										 var ran = new Date().getTime();
+										 $('#messages').append($('<li><span>@' + rec[kk].sender + ' : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+										 $('#img'+ran).attr('src',  rec[kk].message);
+									  }else
+									  {
+                                      $('#messages').append($('<li><span style="border-left: 5px solid #558abb;"> @' + rec[kk].sender + ' :' + rec[kk].message + '</span></li>' ));
+									  }
+                                   }
+                                    k=z;
+                                }
+                                continue;
+                            }
+                      
+                        
+                            if (sent[i1].date > rec[j1].date)
+                            {
+							  if (rec[j1].type==='img-type')
+								 {
+									 var ran = new Date().getTime();
+									 $('#messages').append($('<li><span>@' + rec[j1].sender + ' :<img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+									 $('#img'+ran).attr('src',  rec[j1].message);
+								}else
+								{
+									$('#messages').append($('<li><span style="border-left: 5px solid #558abb;"> @' + rec[j1].sender + ' :' + rec[j1].message + '</span></li>'));
+								}
+                                j1++;
+                                if (j1 >= j) {
+                                   for (var kk = i1 ; kk < i ; kk++)
+                                   {
+									 if (sent[kk].type==='img-type')
+									  {
+										var ran = new Date().getTime();
+										$('#messages').append($('<li style="text-align:right;"><span>@you : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+										$('#img'+ran).attr('src',  sent[kk].message);
+									  }else
+									  {
+										$('#messages').append($('<li style="text-align:right;"><span style="border-right: 5px solid #558abb;">@you :' +  sent[kk].message + '</span></li>'));
+									  }
+                                   }
+                                    
+                                    k=z;
+                                }
+                                continue;
+                            }
+                    }
+
+                });
+            }
+			
+			 function selectg(data)
+            {
+               $('#selected').empty();
+			  
+			  var dat = {
+				usr:user,
+				grp:data
+				};
+				
+			  socket.emit('confirm user', dat);
+			  
+			  socket.on('approve user', function (usr) {
+				if (usr.id == '')
+				{
+                  $('#alerts').empty();
+                  $('#alerts').append($('<li>').text('@'+user.id+' request message sent over group chat!'));  
+                }else
+				{
+				reloadGrpMessage(user.id, data);
+				rec.id = data;
+				$('#selected').empty();
+				$('#selected').append($('<li>').text('@' + rec.id ));
+				}
+			  });
+			  
+            }
+			
+			function reloadGrpMessage(sen, rec)
+            {
+                socket.emit('historyGrp', {me:sen, it:rec});
+                socket.on('historyBackGrp', function (msg)
+                {                 
+                  var rec = msg.rec; 
+                  var j = rec.length;
+                  $('#messages').empty();
+                  var j1=0;
+                  
+                  for (var k = 0; k < j; k++)
+                    {
+					  if (rec[k].type === 'approve-type')
+					  {
+                       $('#messages').append($('<li  style="text-align:center"><span>@' + rec[k].sender + ' :' + rec[k].message + '</span></li>'));
+					   $('#messages').append($('<li  style="text-align:center ; cursor: pointer;"><span style="color:green" onclick="approve(\'' + rec[k].sender + '\',\'' + rec[k].reciever + '\')">OK!</span><span style="color:red; cursor: pointer;" onclick="deny(\''+rec[k].sender+'\')">NO!</span></li>'));
+					   continue;
+                      }
+					  if ( rec[k].sender === user.id )
+					  {
+						if (rec[k].type==='img-type')
+						{
+						   var ran = new Date().getTime();
+						   $('#messages').append($('<li style="text-align:right;"><span>@you : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+						   $('#img'+ran).attr('src', rec[k].message);
+                        }else
+						{
+						   $('#messages').append($('<li style="text-align:right;"><span style="border-right: 5px solid #558abb;"> @you :' + rec[k].message + '</span></li>'));
+						}
+                      } else
+					  {
+						if (rec[k].type==='img-type')
+						{
+						   var ran = new Date().getTime();
+						   $('#messages').append($('<li><span>@' + rec[k].sender + ' : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+						   $('#img'+ran).attr('src', rec[k].message);
+                        }else
+						{
+						 $('#messages').append($('<li><span style="border-left: 5px solid #558abb;"> @' + rec[k].sender + ' :' + rec[k].message + '</span></li>'));
+						 }
+					  } 
+                    }
+                });
+            }
+			
+			function approve(userId, grpId)
+			{
+                socket.emit('userGroup', {user:{id:userId}, name:grpId});   
+            }
+            
+			function deny(arg)
+			{
+                alert('ok dokey!');
+            }
+            
+            function showGroup()
+            {
+              document.getElementById('g').style.visibility = 'visible';
+              document.getElementById('sg').style.visibility = 'visible';
+			  document.getElementById('h').style.visibility = 'visible';
+              $('#g').val('');
+            }
+            
+             function hideGroup()
+            {
+               document.getElementById('g').style.visibility = 'hidden';
+               document.getElementById('sg').style.visibility = 'hidden';
+			   document.getElementById('h').style.visibility = 'hidden';
+            }
+			
+			function signout() {
+			  window.location.href = '/';
+              socket.destroy();
+            }
+			
+			$("#sg").click(function()
+							 {
+							 var groupName = $('#g').val();
+							 $('#g').val('');
+							 hideGroup();
+							 if (groupName !== '')
+							  {
+								var grp = {};
+								grp.user = user;
+								grp.name = groupName;
+								socket.emit('createGroup', grp);
+																   
+								socket.emit('userGroup', grp);   
+							  }				
+							 });
+
+            $('#clr').submit(function () {
+                if( rec.id === "" )
+                {
+                  $('#alerts').empty();
+                  $('#alerts').append($('<li>').text('@' + user.id + ' : please select a contact' ));
+                }else if($( '#m').val() === '' )
+                {
+                 $('#alerts').empty();
+                 $('#alerts').append($('<li>').text('@' + user.id + ' : please fill the box' ));
+                }else
+                {
+                    var msg = {
+                      code : "",
+                      msg: $('#m').val(),
+                      sender: user,
+                      reciever: rec,
+                      type: 'text-type'
+                    };
+                    socket.emit('chat message', msg);
+                    $('#messages').append($('<li style="text-align:right;"><span  style="border-right: 5px solid #558abb;">@you' + ' :' + msg.msg + '</span></li>'));
+                    $('#m').val('');
+                }
+                return false;
+            });
+            socket.on('chat message', function (data) {
+                var msg = data;
+				var select = $('#selected').text().substring(1, $('#selected').text().length);
+				if (msg.code === 'groupMsg')
+				{
+                   if (select ==  msg.reciever.id)
+					{
+					  if (msg.type==='img-type')
+						{
+						   var ran = new Date().getTime();
+						   $('#messages').append($('<li><span>@' + msg.sender.id + ' : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+						   $('#img'+ran).attr('src', msg.message);
+                        }else
+						{
+                     $('#messages').append($('<li><span style="border-left: 5px solid #558abb;">@' + msg.sender.id + ' :' + msg.msg+ '</span></li>'));
+					 }
+					}
+                }
+				if (msg.code === 'member')
+				{
+				  
+                   if (select ==  msg.sender.id)
+					{
+					  if (msg.type==='img-type')
+						{
+						   var ran = new Date().getTime();
+						   $('#messages').append($('<li><span>@' + msg.sender.id + ' : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
+						   $('#img'+ran).attr('src', msg.msg);
+						   
+                        }else
+						{
+                     $('#messages').append($('<li><span style="border-left: 5px solid #558abb;">@' + msg.sender.id + ' :' + msg.msg+ '</span></li>'));
+					 }
+					}
+                }
+				
+               
+            });
+    </script>
+</html>

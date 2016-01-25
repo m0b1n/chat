@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Home Page | Chat Web App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="http://ifont.ir/apicode/38">
+<script type="text/javascript">
+	function checkPass() {
+		//Store the password field objects into variables ...
+		var pass1 = document.getElementById('f');
+		var pass2 = document.getElementById('n');
+		//Store the Confimation Message Object ...
+		var message = document.getElementById('confirmMessage');
+		//Set the colors we will be using ...
+		var goodColor = "#66cc66";
+		var badColor = "#ff6666";
+		//Compare the values in the password field 
+		//and the confirmation field
+		if (pass1.value === pass2.value) {
+			//The passwords match. 
+			//Set the color to the good color and inform
+			//the user that they have entered the correct password 
+			pass2.style.backgroundColor = goodColor;
+			message.style.color = goodColor;
+			message.innerHTML = "Passwords Match!";
+		} else {
+			//The passwords do not match.
+			//Set the color to the bad color and
+			//notify the user.
+			pass2.style.backgroundColor = badColor;
+			message.style.color = badColor;
+			message.innerHTML = "Passwords Do Not Match!";
+		}
+	}
+</script>
+</head>
+
+<body style="text-align: center">
+	<h1>Wellcome</h1>
+	<div class="wrapper">
+		<div class="sign-in form-style-4">
+			<label>ورود</label>
+			<form action="/da" method="post" autocomplete="off" name="sign in">
+				<p>نام کاربری :</p>
+				<input type="text" name="id"
+					placeholder="لطفا نام کاربری را وارد نمایید" /> <br />
+				<p>رمز عبور :</p>
+				<input type="password" name="pass" /> <br /> <span>&nbsp;</span><input
+					type="submit" name="submit" value="submit" />
+			</form>
+		</div>
+		<div class="sign-up form-style-4">
+			<label>ثبت نام</label>
+			<form action="/user" method="post" autocomplete="off" name="signup">
+				<p>نام:</p>
+				<input type="text" name="name"
+					placeholder="لطفا نام خود را وارد نمایید" /><br />
+				<p>نام کاربری :</p>
+				<input type="text" name="id"
+					placeholder="لطفا نام کاربری خود را وارد نمایید" /><br />
+				<p>جنسیت :</p>
+				<input type="radio" name="gender" value="male" checked> مرد<br>
+				<span>&nbsp;</span><input type="radio"
+					name="gender" value="female"> زن<br>
+
+				<p>رمز عبور :</p>
+				<input id="f" type="password" name="pass" /><br />
+				<p>تایید رمز عبور :</p>
+				<input id="n" type="password" name="passconfirm"
+					onkeyup="checkPass();
+                            return false;" /><br />
+				<span id="confirmMessage" class="confirmMessage"></span> <span>&nbsp;</span><input
+					type="submit" name="submit" value="submit" />
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>
