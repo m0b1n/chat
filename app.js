@@ -133,19 +133,6 @@ function decodeBase64Image(dataString) {
 	return response;
 }
 
-function decodeBase64Audio(dataString) {
-	var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/), response = {};
-	
-	console.log(type);
-	if (matches.length !== 3) {
-		return new Error('Invalid input string');
-	}
-	response.type = matches[1];
-	response.data = new Buffer(matches[2], 'base64');
-	
-	return response;
-}
-
 io.on('connection', function(socket) {
 
 	console.log('socket came in');
@@ -237,7 +224,6 @@ io.on('connection', function(socket) {
 			if (err) {
 				console.log(err);
 			}
-			console.log('grp saved');
 		});
 
 		group.push(grp);
@@ -255,7 +241,6 @@ io.on('connection', function(socket) {
 			if (err) {
 				console.log(err);
 			}
-			console.log('usr grp saved');
 			dal.createHistory("groupMsg", {
 				id : grp.id
 			}, {
@@ -290,32 +275,27 @@ io.on('connection', function(socket) {
 	                   
 	                });
 	               
-	            }else{ fs.writeFile(__dirname + "/media/" + new Date().getTime() + ".jpg", base64Data.data, function(
+	            }else
+                { 
+                    fs.writeFile(__dirname + "/media/" + new Date().getTime() + ".jpg", base64Data.data, function(
         					err) {
         				if (err) {
         					console.log('ERROR:: ' + err);
         					throw err;
         				}
-        			});}
+        			});
+                }
 			});	
 		}else if (msg.type === 'audio-type')
 		{
-			
-		}else if (msg.type === 'video-type')
-		{
-			
-		}else if (msg.type === 'other-type')
-		{
-			console.log('here dear!');
-			
 			var base64Data = decodeBase64Image(msg.msg);
-			
-			var ran = new Date().getTime();
+			// if directory is not already created, then create it, otherwise
+			// overwrite existing image
 			fs.exists(path.join(__dirname, "media"), function(exists) {
 				if (!exists) {
 	                fs.mkdir(path.join(__dirname, "media"), function (e) {
 	                   
-	            			fs.writeFile(__dirname + "/media/" + msg.name,base64Data.data, function(
+	            			fs.writeFile(__dirname + "/media/" + new Date().getTime() + ".jpg", base64Data.data, function(
 	            					err) {
 	            				if (err) {
 	            					console.log('ERROR:: ' + err);
@@ -325,16 +305,21 @@ io.on('connection', function(socket) {
 	                   
 	                });
 	               
-	            }else{ fs.writeFile(__dirname + "/media/" + msg.name, base64Data.data, function(
+	            }else
+                { 
+                    fs.writeFile(__dirname + "/media/" + new Date().getTime() + ".mp3", base64Data.data, function(
         					err) {
         				if (err) {
         					console.log('ERROR:: ' + err);
         					throw err;
         				}
-        			});}
-			});
-			socket.emit('other type', {add:msg.name});
-			return;
+        			});
+                }
+			});	
+			
+		}else if (msg.type === 'other-type')
+		{
+            return;
 		}
 
 		dal.getGrp(msg.reciever.id, function(err, usr) {
@@ -375,6 +360,7 @@ io.on('connection', function(socket) {
 						});
 				for (var i = 0; i < sockets.length; i++) {
 					if (sockets[i].users.id === msg.reciever.id) {
+                        console.log(msg.reciever.id);
 						sockets[i].emit('chat message', msg);
 					}
 				}

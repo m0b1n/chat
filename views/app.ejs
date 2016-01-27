@@ -83,7 +83,6 @@
 						  
 						var imageType = /^image\//;
 						var audioType =  /^audio\//;
-						var videoType = /^video\//;
 						
 				  reader.onload = function(evt){
 					  var ran = new Date().getTime();
@@ -109,19 +108,7 @@
 								reciever: rec,
 								type: 'audio-type'
 								};
-						}else if(videoType.test(file.type))
-						{
-							$('#messages').append($('<li style="text-align:right;"><span>@you :<video controls> <source src=""  id="img'+ran+'" type="'+file.type+'"></video> </span></li>'));
-							$('#img'+ran).attr('src', evt.target.result);
-							var msg = {
-								code : "",
-								msg: evt.target.result,
-								sender: user,
-								reciever: rec,
-								type: 'video-type'
-								};
-						}
-						else
+						}else
 						{
 							var msg = {
 									code : "",
@@ -132,17 +119,12 @@
 									reciever : rec,
 									type : 'other-type'
 									};
-							socket.emit('chat message', msg);
-							socket.on('other type', function(data){
-							$('#messages').append($('<li style="text-align:right;"><span>@you : <a href=""  id="img'+ran+'" type="'+file.type+'"> <code>file</code> </a></span></li>'));
-							$('#img'+ran).attr('href', data.add);
-							});
 						}
-							/*
-							// async 
-									// send a custom socket message to server
-									socket.emit('chat message', msg);
-							*/
+							
+				    // async 
+					// send a custom socket message to server
+					socket.emit('chat message', msg);
+							
 				  };
 				  reader.readAsDataURL(file);
 				  }
@@ -238,7 +220,13 @@
 								 var ran = new Date().getTime();
 								 $('#messages').append($('<li style="text-align:right;"><span>@you : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
 								 $('#img'+ran).attr('src', sent[i1].message);
-                              }else
+                              }else if (sent[i1].type==='audio-type')
+                             {
+                               var ran = new Date().getTime();
+                               $('#messages').append($('<li style="text-align:right;"><span>@you :<audio controls> <source src=""  id="img'+ran+'"></audio> </span></li>'));
+                               $('#img'+ran).attr('src', sent[i1].message);
+
+                             }else
 							  {
                                  $('#messages').append($('<li style="text-align:right"><span style="border-left: 5px solid #558abb;"> @you:' + sent[i1].message + '</span></li>'));
 							  }
@@ -251,7 +239,13 @@
 										 var ran = new Date().getTime();
 										 $('#messages').append($('<li><span>@' + rec[kk].sender + ' : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
 										 $('#img'+ran).attr('src',  rec[kk].message);
-									  }else
+									  }else if (rec[kk].type==='audio-type')
+                                        {
+                                            var ran = new Date().getTime();
+                                            $('#messages').append($('<li><span>@' + rec[kk].sender + ' :<audio controls> <source src=""  id="img'+ran+'"></audio> </span></li>'));
+                                            $('#img'+ran).attr('src', rec[kk].message);
+
+                                        }else
 									  {
                                       $('#messages').append($('<li><span style="border-left: 5px solid #558abb;"> @' + rec[kk].sender + ' :' + rec[kk].message + '</span></li>' ));
 									  }
@@ -269,7 +263,13 @@
 									 var ran = new Date().getTime();
 									 $('#messages').append($('<li><span>@' + rec[j1].sender + ' :<img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
 									 $('#img'+ran).attr('src',  rec[j1].message);
-								}else
+								}else if (rec[j1].type==='audio-type')
+                                        {
+                                            var ran = new Date().getTime();
+                                            $('#messages').append($('<li><span>@' + rec[j1].sender + ' :<audio controls> <source src=""  id="img'+ran+'"></audio> </span></li>'));
+                                            $('#img'+ran).attr('src', rec[j1].message);
+
+                                        }else
 								{
 									$('#messages').append($('<li><span style="border-left: 5px solid #558abb;"> @' + rec[j1].sender + ' :' + rec[j1].message + '</span></li>'));
 								}
@@ -282,7 +282,13 @@
 										var ran = new Date().getTime();
 										$('#messages').append($('<li style="text-align:right;"><span>@you : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
 										$('#img'+ran).attr('src',  sent[kk].message);
-									  }else
+									  }else if (sent[kk].type==='audio-type')
+                                        {
+                                            var ran = new Date().getTime();
+                                            $('#messages').append($('<li style="text-align:right;"><span>@you :<audio controls> <source src=""  id="img'+ran+'"></audio> </span></li>'));
+                                            $('#img'+ran).attr('src', sent[kk].message);
+
+                                        }else
 									  {
 										$('#messages').append($('<li style="text-align:right;"><span style="border-right: 5px solid #558abb;">@you :' +  sent[kk].message + '</span></li>'));
 									  }
@@ -349,6 +355,12 @@
 						   var ran = new Date().getTime();
 						   $('#messages').append($('<li style="text-align:right;"><span>@you : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
 						   $('#img'+ran).attr('src', rec[k].message);
+                        }else if (rec[k].type==='audio-type')
+                        {
+                            var ran = new Date().getTime();
+                            $('#messages').append($('<li style="text-align:right;"><span>@you :<audio controls> <source src=""  id="img'+ran+'"></audio> </span></li>'));
+							$('#img'+ran).attr('src', rec[k].message);
+                            
                         }else
 						{
 						   $('#messages').append($('<li style="text-align:right;"><span style="border-right: 5px solid #558abb;"> @you :' + rec[k].message + '</span></li>'));
@@ -360,6 +372,12 @@
 						   var ran = new Date().getTime();
 						   $('#messages').append($('<li><span>@' + rec[k].sender + ' : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
 						   $('#img'+ran).attr('src', rec[k].message);
+                        }else if (rec[k].type==='audio-type')
+                        {
+                            var ran = new Date().getTime();
+                            $('#messages').append($('<li><span>@' + rec[k].sender + ' :<audio controls> <source src=""  id="img'+ran+'"></audio> </span></li>'));
+							$('#img'+ran).attr('src', rec[k].message);
+                            
                         }else
 						{
 						 $('#messages').append($('<li><span style="border-left: 5px solid #558abb;"> @' + rec[k].sender + ' :' + rec[k].message + '</span></li>'));
@@ -450,7 +468,12 @@
 						{
 						   var ran = new Date().getTime();
 						   $('#messages').append($('<li><span>@' + msg.sender.id + ' : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
-						   $('#img'+ran).attr('src', msg.message);
+						   $('#img'+ran).attr('src', msg.msg);
+                        }else if (msg.type==='audio-type')
+                        {
+                            var ran = new Date().getTime();
+                            $('#messages').append($('<li><span>@' + msg.sender.id + ' :<audio controls> <source src=""  id="img'+ran+'" ></audio> </span></li>'));
+							$('#img'+ran).attr('src', msg.msg);
                         }else
 						{
                      $('#messages').append($('<li><span style="border-left: 5px solid #558abb;">@' + msg.sender.id + ' :' + msg.msg+ '</span></li>'));
@@ -468,10 +491,16 @@
 						   $('#messages').append($('<li><span>@' + msg.sender.id + ' : <img src="" id="img'+ran+'" style="width: 200px; height: 220px; border-width: 0px;"/> </span></li>'));
 						   $('#img'+ran).attr('src', msg.msg);
 						   
+                        }else if (msg.type==='audio-type')
+                        {
+                            var ran = new Date().getTime();
+                            $('#messages').append($('<li><span>@' + msg.sender.id + ' :<audio controls> <source src=""  id="img'+ran+'" ></audio> </span></li>'));
+							$('#img'+ran).attr('src', msg.msg);
+                            
                         }else
 						{
-                     $('#messages').append($('<li><span style="border-left: 5px solid #558abb;">@' + msg.sender.id + ' :' + msg.msg+ '</span></li>'));
-					 }
+                             $('#messages').append($('<li><span style="border-left: 5px solid #558abb;">@' + msg.sender.id + ' :' + msg.msg+ '</span></li>'));
+                        }
 					}
                 }
 				
