@@ -9,7 +9,7 @@ final project ; network course ; fall 2015
 
 send message; image ; video ; audio
 
-## Developing
+## Developing Team
 
 developer : mobin ghahramanpour bonab
 
